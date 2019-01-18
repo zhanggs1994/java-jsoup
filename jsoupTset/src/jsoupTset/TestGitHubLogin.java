@@ -19,60 +19,60 @@ public class TestGitHubLogin {
 	    
 	    public static void main(String[] args) throws Exception {
 	 
-	        simulateLogin("921364401@qq.com", "zgs921364401"); // Ä£ÄâµÇÂ½githubµÄÓÃ»§ÃûºÍÃÜÂë
+	        simulateLogin("*****", "******"); // æ¨¡æ‹Ÿç™»é™†githubçš„ç”¨æˆ·åå’Œå¯†ç 
 	 
 	    }
 	 
 	    /**
-	     * @param userName ÓÃ»§Ãû
-	     * @param pwd ÃÜÂë
+	     * @param userName ç”¨æˆ·å
+	     * @param pwd å¯†ç 
 	     * @throws Exception
 	     */
 	    public static void simulateLogin(String userName, String pwd) throws Exception {
 	 
 	        /* 
-	         * µÚÒ»´ÎÇëÇó 
+	         * ç¬¬ä¸€æ¬¡è¯·æ±‚ 
 	         * grab login form page first
-	         * »ñÈ¡µÇÂ½Ìá½»µÄ±íµ¥ĞÅÏ¢£¬¼°ĞŞ¸ÄÆäÌá½»dataÊı¾İ£¨login£¬password£©
+	         * è·å–ç™»é™†æäº¤çš„è¡¨å•ä¿¡æ¯ï¼ŒåŠä¿®æ”¹å…¶æäº¤dataæ•°æ®ï¼ˆloginï¼Œpasswordï¼‰
 	         */
 	        // get the response, which we will post to the action URL(rs.cookies())
-	        Connection con = Jsoup.connect(LOGIN_URL);  // »ñÈ¡connection
-	        con.header(USER_AGENT, USER_AGENT_VALUE);   // ÅäÖÃÄ£Äâä¯ÀÀÆ÷
-	        Response rs = con.execute();                // »ñÈ¡ÏìÓ¦
-	        Document d1 = Jsoup.parse(rs.body());       // ×ª»»ÎªDomÊ÷
-	        List<Element> eleList = d1.select("form");  // »ñÈ¡Ìá½»form±íµ¥£¬¿ÉÒÔÍ¨¹ı²é¿´Ò³ÃæÔ´Âë´úÂëµÃÖª
+	        Connection con = Jsoup.connect(LOGIN_URL);  // è·å–connection
+	        con.header(USER_AGENT, USER_AGENT_VALUE);   // é…ç½®æ¨¡æ‹Ÿæµè§ˆå™¨
+	        Response rs = con.execute();                // è·å–å“åº”
+	        Document d1 = Jsoup.parse(rs.body());       // è½¬æ¢ä¸ºDomæ ‘
+	        List<Element> eleList = d1.select("form");  // è·å–æäº¤formè¡¨å•ï¼Œå¯ä»¥é€šè¿‡æŸ¥çœ‹é¡µé¢æºç ä»£ç å¾—çŸ¥
 	 
-	        // »ñÈ¡cookingºÍ±íµ¥ÊôĞÔ
+	        // è·å–cookingå’Œè¡¨å•å±æ€§
 	        // lets make data map containing all the parameters and its values found in the form
 	        Map<String, String> datas = new HashMap<>();
 	        for (Element e : eleList.get(0).getAllElements()) {
-	            // ÉèÖÃÓÃ»§Ãû
+	            // è®¾ç½®ç”¨æˆ·å
 	            if (e.attr("name").equals("login")) {
 	                e.attr("value", userName);
 	            }
-	            // ÉèÖÃÓÃ»§ÃÜÂë
+	            // è®¾ç½®ç”¨æˆ·å¯†ç 
 	            if (e.attr("name").equals("password")) {
 	                e.attr("value", pwd);
 	            }
-	            // ÅÅ³ı¿ÕÖµ±íµ¥ÊôĞÔ
+	            // æ’é™¤ç©ºå€¼è¡¨å•å±æ€§
 	            if (e.attr("name").length() > 0) {
 	                datas.put(e.attr("name"), e.attr("value"));
 	            }
 	        }
 	 
 	        /*
-	         * µÚ¶ş´ÎÇëÇó£¬ÒÔpost·½Ê½Ìá½»±íµ¥Êı¾İÒÔ¼°cookieĞÅÏ¢
+	         * ç¬¬äºŒæ¬¡è¯·æ±‚ï¼Œä»¥postæ–¹å¼æäº¤è¡¨å•æ•°æ®ä»¥åŠcookieä¿¡æ¯
 	         */
 	        Connection con2 = Jsoup.connect("https://github.com/session");
 	        con2.header(USER_AGENT, USER_AGENT_VALUE);
-	        // ÉèÖÃcookieºÍpostÉÏÃæµÄmapÊı¾İ
+	        // è®¾ç½®cookieå’Œpostä¸Šé¢çš„mapæ•°æ®
 	        Response login = con2.ignoreContentType(true).followRedirects(true).method(Method.POST)
 	                                .data(datas).cookies(rs.cookies()).execute();
-	        // ´òÓ¡£¬µÇÂ½³É¹¦ºóµÄĞÅÏ¢
+	        // æ‰“å°ï¼Œç™»é™†æˆåŠŸåçš„ä¿¡æ¯
 	        // parse the document from response
 	        System.out.println(login.body());
 	 
-	        // µÇÂ½³É¹¦ºóµÄcookieĞÅÏ¢£¬¿ÉÒÔ±£´æµ½±¾µØ£¬ÒÔºóµÇÂ½Ê±£¬Ö»ĞèÒ»´ÎµÇÂ½¼´¿É
+	        // ç™»é™†æˆåŠŸåçš„cookieä¿¡æ¯ï¼Œå¯ä»¥ä¿å­˜åˆ°æœ¬åœ°ï¼Œä»¥åç™»é™†æ—¶ï¼Œåªéœ€ä¸€æ¬¡ç™»é™†å³å¯
 	        Map<String, String> map = login.cookies();
 	        for (String s : map.keySet()) {
 	            System.out.println(s + " : " + map.get(s));
